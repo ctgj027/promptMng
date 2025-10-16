@@ -40,7 +40,7 @@ export default function PromptWorkspace({ prompts }: PromptWorkspaceProps) {
 
   const filteredPrompts = useMemo(() => {
     const searchSet = new Set(
-      query ? searchPrompts(searchIndex, query).map((result) => result.id as string) : prompts.map((prompt) => prompt.slug)
+      query ? searchPrompts(searchIndex, query).map((result) => result.slug) : prompts.map((prompt) => prompt.slug)
     );
 
     return prompts

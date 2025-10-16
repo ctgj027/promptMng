@@ -1,24 +1,39 @@
-import MiniSearch from 'mini-search';
 import { Prompt } from './types';
 
-export type SearchIndex = MiniSearch<Prompt>;
+const normalize = (value: string) => value.normalize('NFKD').toLowerCase();
+
+const promptText = (prompt: Prompt) =>
+  normalize(
+    [
+      prompt.meta.title,
+      prompt.meta.description ?? '',
+      prompt.meta.tags.join(' '),
+      prompt.meta.useCases.join(' '),
+      prompt.content
+    ].join(' ')
+  );
+
+export type SearchIndex = Map<string, { prompt: Prompt; text: string }>;
 
 export function createSearchIndex(prompts: Prompt[]) {
-  const index = new MiniSearch<Prompt>({
-    fields: ['meta.title', 'meta.tags', 'content'],
-    storeFields: ['slug', 'meta', 'content'],
-    idField: 'slug',
-    extractField: (document, fieldName) =>
-      fieldName.split('.').reduce<any>((doc, key) => (doc ? doc[key as keyof typeof doc] : undefined), document),
-    searchOptions: {
-      boost: { 'meta.title': 2 }
-    }
-  });
-  index.addAll(prompts);
-  return index;
+  const entries = prompts.map((prompt) => [prompt.slug, { prompt, text: promptText(prompt) }] as const);
+  return new Map(entries);
 }
 
 export function searchPrompts(index: SearchIndex, query: string) {
-  if (!query) return [];
-  return index.search(query, { prefix: true });
+  const terms = query
+    .trim()
+    .split(/\s+/)
+    .map((term) => term.trim())
+    .filter(Boolean);
+
+  if (terms.length === 0) {
+    return [];
+  }
+
+  const normalizedTerms = terms.map((term) => normalize(term));
+
+  return Array.from(index.values())
+    .filter(({ text }) => normalizedTerms.every((term) => text.includes(term)))
+    .map(({ prompt }) => prompt);
 }

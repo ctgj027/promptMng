@@ -19,7 +19,6 @@
     "diff": "^5.2.0",
     "js-yaml": "^4.1.0",
     "lodash.merge": "^4.6.2",
-    "mini-search": "^6.2.0",
     "next": "^14.2.0",
     "next-auth": "^4.24.7",
     "next-intl": "^3.14.1",
