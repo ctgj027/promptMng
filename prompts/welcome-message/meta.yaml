@@ -1,0 +1,15 @@
+title: Welcome message
+slug: welcome-message
+tags:
+  - greeting
+  - onboarding
+createdAt: 2024-01-01T00:00:00.000Z
+updatedAt: 2024-01-01T00:00:00.000Z
+author: system
+language: en
+useCases:
+  - onboarding
+modelHints:
+  temperature: 0.4
+  top_p: 0.9
+description: Friendly welcome note for new users.
